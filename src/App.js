@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { storage } from "./firebase";
+import { ref, uploadBytes } from "firebase/storage";
+import { v4 } from "uuid";
+
+import "./App.css";
 
 function App() {
+  const [imageUpload, setImageUpload] = useState(null);
+  const uploadImage = () => {
+    if (imageUpload == null) return;
+    const imageRef = ref(storage, `images/${imageUpload.name + v4}`);
+    uploadBytes(imageRef, imageUpload).then(() => {
+      alert("Image Uploaded");
+    });
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h3>Upload File</h3>
+      <input
+        type="file"
+        onChange={(e) => {
+          setImageUpload(e.target.files[0]);
+        }}
+      />
+      <button onClick={uploadImage}>Upload NFT</button>
     </div>
   );
 }
